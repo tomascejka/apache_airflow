@@ -1,0 +1,256 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "Scheduler Heartbeat",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "airflow_other{metric=\"scheduler_heartbeat\"}",
+          "legendFormat": "heartbeats"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } }
+      }
+    },
+    {
+      "title": "DAG Runs Running",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "expr": "airflow_scheduler_dagruns_running", "legendFormat": "running" }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 10 }] } }
+      }
+    },
+    {
+      "title": "Tasks Executable",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "airflow_scheduler_tasks_executable", "legendFormat": "executable" }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 10 }] } }
+      }
+    },
+    {
+      "title": "Tasks Starving",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "expr": "airflow_scheduler_tasks_starving", "legendFormat": "starving" }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 5 }] } }
+      }
+    },
+    {
+      "title": "Executor - Running & Queued Tasks",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "airflow_executor_running_tasks_CeleryExecutor", "legendFormat": "Celery running" },
+        { "expr": "airflow_executor_running_tasks_EdgeExecutor", "legendFormat": "Edge running" },
+        { "expr": "airflow_executor_queued_tasks_CeleryExecutor", "legendFormat": "Celery queued" },
+        { "expr": "airflow_executor_queued_tasks_EdgeExecutor", "legendFormat": "Edge queued" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 20 } } }
+    },
+    {
+      "title": "Executor - Open Slots",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "expr": "airflow_executor_open_slots_CeleryExecutor", "legendFormat": "Celery open" },
+        { "expr": "airflow_executor_open_slots_EdgeExecutor", "legendFormat": "Edge open" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Pool - All Slot States (default_pool)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "airflow_pool_running_slots{pool=\"default_pool\"}", "legendFormat": "running" },
+        { "expr": "airflow_pool_open_slots{pool=\"default_pool\"}", "legendFormat": "open" },
+        { "expr": "airflow_pool_queued_slots", "legendFormat": "queued" },
+        { "expr": "airflow_pool_deferred_slots", "legendFormat": "deferred" },
+        { "expr": "airflow_pool_scheduled_slots", "legendFormat": "scheduled" },
+        { "expr": "airflow_pool_starving_tasks", "legendFormat": "starving" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 20 } } }
+    },
+    {
+      "title": "Pool - Starving Tasks",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        { "expr": "airflow_pool_starving_tasks", "legendFormat": "global starving" },
+        { "expr": "airflow_pool_starving_tasks_default_pool", "legendFormat": "default_pool starving" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Scheduler - Critical Section Duration",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [
+        { "expr": "airflow_scheduler_critical_section_duration{quantile=\"0.5\"}", "legendFormat": "p50" },
+        { "expr": "airflow_scheduler_critical_section_duration{quantile=\"0.9\"}", "legendFormat": "p90" },
+        { "expr": "airflow_scheduler_critical_section_duration{quantile=\"0.99\"}", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Scheduler - Loop Duration",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "targets": [
+        { "expr": "airflow_scheduler_scheduler_loop_duration{quantile=\"0.5\"}", "legendFormat": "p50" },
+        { "expr": "airflow_scheduler_scheduler_loop_duration{quantile=\"0.9\"}", "legendFormat": "p90" },
+        { "expr": "airflow_scheduler_scheduler_loop_duration{quantile=\"0.99\"}", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Scheduler - Critical Section Query Duration",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "targets": [
+        { "expr": "airflow_scheduler_critical_section_query_duration{quantile=\"0.5\"}", "legendFormat": "p50" },
+        { "expr": "airflow_scheduler_critical_section_query_duration{quantile=\"0.9\"}", "legendFormat": "p90" },
+        { "expr": "airflow_scheduler_critical_section_query_duration{quantile=\"0.99\"}", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Scheduler - Orphaned Tasks",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
+      "targets": [
+        { "expr": "airflow_scheduler_orphaned_tasks_adopted", "legendFormat": "adopted" },
+        { "expr": "airflow_scheduler_orphaned_tasks_cleared", "legendFormat": "cleared" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "DAG Run Duration (success)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+      "targets": [
+        { "expr": "airflow_dagrun_duration_success{quantile=\"0.5\"}", "legendFormat": "p50" },
+        { "expr": "airflow_dagrun_duration_success{quantile=\"0.9\"}", "legendFormat": "p90" },
+        { "expr": "airflow_dagrun_duration_success{quantile=\"0.99\"}", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "DAG Run Dependency Check",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+      "targets": [
+        { "expr": "airflow_dagrun_dependency_check{quantile=\"0.5\"}", "legendFormat": "global p50" },
+        { "expr": "airflow_dagrun_dependency_check{quantile=\"0.9\"}", "legendFormat": "global p90" },
+        { "expr": "airflow_dagrun_dependency_check_monitoring_demo{quantile=\"0.5\"}", "legendFormat": "monitoring_demo p50" },
+        { "expr": "airflow_dagrun_dependency_check_monitoring_demo{quantile=\"0.9\"}", "legendFormat": "monitoring_demo p90" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Task Instance - Starts (rate/min)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 44 },
+      "targets": [
+        { "expr": "rate(airflow_ti_start[1m]) * 60", "legendFormat": "global starts/min" },
+        { "expr": "rate(airflow_ti_start_monitoring_demo_collect_data[1m]) * 60", "legendFormat": "collect_data" },
+        { "expr": "rate(airflow_ti_start_monitoring_demo_validate[1m]) * 60", "legendFormat": "validate" },
+        { "expr": "rate(airflow_ti_start_monitoring_demo_aggregate[1m]) * 60", "legendFormat": "aggregate" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "lineWidth": 1, "fillOpacity": 50 } } }
+    },
+    {
+      "title": "Task Instance - Finishes (rate/min)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 44 },
+      "targets": [
+        { "expr": "rate(airflow_ti_finish[1m]) * 60", "legendFormat": "global finishes/min" },
+        { "expr": "rate(airflow_ti_finish_monitoring_demo_collect_data_success[1m]) * 60", "legendFormat": "collect_data success" },
+        { "expr": "rate(airflow_ti_finish_monitoring_demo_validate_success[1m]) * 60", "legendFormat": "validate success" },
+        { "expr": "rate(airflow_ti_finish_monitoring_demo_aggregate_success[1m]) * 60", "legendFormat": "aggregate success" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "lineWidth": 1, "fillOpacity": 50 } } }
+    },
+    {
+      "title": "Task Duration (global)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
+      "targets": [
+        { "expr": "airflow_task_duration{quantile=\"0.5\"}", "legendFormat": "p50" },
+        { "expr": "airflow_task_duration{quantile=\"0.9\"}", "legendFormat": "p90" },
+        { "expr": "airflow_task_duration{quantile=\"0.99\"}", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Task Scheduled Duration (scheduling delay)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
+      "targets": [
+        { "expr": "airflow_task_scheduled_duration{quantile=\"0.5\"}", "legendFormat": "p50" },
+        { "expr": "airflow_task_scheduled_duration{quantile=\"0.9\"}", "legendFormat": "p90" },
+        { "expr": "airflow_task_scheduled_duration{quantile=\"0.99\"}", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+    },
+    {
+      "title": "Task Instance - Currently Running",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 60 },
+      "targets": [
+        { "expr": "airflow_ti_running", "legendFormat": "total running" },
+        { "expr": "airflow_ti_running_default_monitoring_demo_collect_data", "legendFormat": "collect_data" },
+        { "expr": "airflow_ti_running_default_monitoring_demo_process_batch_1", "legendFormat": "batch_1" },
+        { "expr": "airflow_ti_running_default_monitoring_demo_process_batch_2", "legendFormat": "batch_2" },
+        { "expr": "airflow_ti_running_default_monitoring_demo_process_batch_3", "legendFormat": "batch_3" },
+        { "expr": "airflow_ti_running_default_monitoring_demo_process_batch_4", "legendFormat": "batch_4" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 30, "stacking": { "mode": "normal" } } } }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["airflow"],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Airflow Monitoring",
+  "uid": "airflow-monitoring",
+  "version": 2,
+  "refresh": "10s"
+}
