@@ -34,77 +34,109 @@ Airflow je **batch** nastroj - spousti ulohy v naplanovanych intervalech (hodina
 
 ## Struktura projektu
 
-### Guides
+### Guides — co jsme se naucili
 
-| Adresar | Popis |
-|---------|-------|
-| [gud01_install_docker](guides/gud01_install_docker/README.md) | Instalace Airflow pres Docker Compose |
-| [gud02_install_standalone](guides/gud02_install_standalone/README.md) | Instalace Airflow standalone (pip) |
-| [gud03_building_your_first_workflow](guides/gud03_building_your_first_workflow/README.md) | Prvni DAG - BashOperator, Jinja, dependencies |
-| [gud04_python_operator](guides/gud04_python_operator/README.md) | PythonOperator a TaskFlow API (@task dekorator) |
-| [gud05_xcom_variables_params](guides/gud05_xcom_variables_params/README.md) | XCom, Variables, Params - predavani dat a konfigurace |
-| [gud06_branching_trigger_rules](guides/gud06_branching_trigger_rules/README.md) | Podminene vetveni a pravidla spousteni |
-| [gud07_sensors](guides/gud07_sensors/README.md) | Sensors - cekani na externi podminky |
-| [gud08_error_handling](guides/gud08_error_handling/README.md) | Retries, callbacky, timeouty |
-| [gud09_taskgroups_dynamic](guides/gud09_taskgroups_dynamic/README.md) | TaskGroups a dynamic task mapping |
-| [gud10_scheduling_datasets](guides/gud10_scheduling_datasets/README.md) | Scheduling, datasets (assets), catchup |
-| [gud11_pools_priority_config](guides/gud11_pools_priority_config/README.md) | Pools, priority, concurrency control |
+| # | Adresar | Koncept | Poznatek |
+|---|---------|---------|----------|
+| 01 | [gud01_install_docker](guides/gud01_install_docker/README.md) | Docker Compose setup | 7 kontejneru, Airflow 3.2.2, JWT auth (ne Basic Auth) |
+| 02 | [gud02_install_standalone](guides/gud02_install_standalone/README.md) | Standalone (pip) | Na Windows nefunguje — nutny Docker nebo WSL2 |
+| 03 | [gud03_building_your_first_workflow](guides/gud03_building_your_first_workflow/README.md) | DAG, tasky, operatory | BashOperator, Jinja templates (`{{ ds }}`), `>>` dependencies |
+| 04 | [gud04_python_operator](guides/gud04_python_operator/README.md) | PythonOperator, TaskFlow | @task dekorator = moderni pristup; return = XCom automaticky |
+| 05 | [gud05_xcom_variables_params](guides/gud05_xcom_variables_params/README.md) | XCom, Variables, Params | 3 mechanismy: task↔task (XCom), globalni (Variables), per-run (Params) |
+| 06 | [gud06_branching_trigger_rules](guides/gud06_branching_trigger_rules/README.md) | Branching, trigger rules | BranchPythonOperator, ShortCircuitOperator, 6 trigger rules |
+| 07 | [gud07_sensors](guides/gud07_sensors/README.md) | Sensors | FileSensor, TimeDeltaSensor, ExternalTaskSensor; poke vs reschedule |
+| 08 | [gud08_error_handling](guides/gud08_error_handling/README.md) | Retries, callbacky, timeouty | Exponential backoff, on_success/failure/retry callbacky, execution_timeout |
+| 09 | [gud09_taskgroups_dynamic](guides/gud09_taskgroups_dynamic/README.md) | TaskGroups, expand() | Vizualni skupiny + dynamicky pocet tasku za behu (map+reduce) |
+| 10 | [gud10_scheduling_datasets](guides/gud10_scheduling_datasets/README.md) | Scheduling, assets, catchup | Cron, Asset-driven scheduling, catchup vytvori historicke runy |
+| 11 | [gud11_pools_priority_config](guides/gud11_pools_priority_config/README.md) | Pools, priority, concurrency | Pool sloty omezuji soubehu; hierarchie: parallelism > pool > max_active_tasks |
 
-### PoCs - proof of concepts
+Guides gud04-gud11 maji automatizovane testy (`test.ps1` + `pytests/e2e/`).
 
-| Adresar | Popis |
-|---------|-------|
-| [poc01_automotive_etl](pocs/poc01_automotive_etl/README.md) | Batch ETL ze stroju (CSV+JSON → transform → CSV+SQLite) |
-| [poc02_edge_worker](pocs/poc02_edge_worker/README.md) | Distribuovana architektura - centrala + remote Edge Worker |
-| [poc03_edge_etl](pocs/poc03_edge_etl/README.md) | Spojeni poc01+poc02: extract na lince (edge), transform+load na centrale |
-| [poc04_monitoring](pocs/poc04_monitoring/README.md) | Monitoring: Prometheus + Grafana + demo workflow |
-| [poc05_monitoring_zabbix](pocs/poc05_monitoring_zabbix/README.md) | Monitoring: Zabbix (HTTP Agent → REST API) |
-| [poc06_alternatives](pocs/poc06_alternatives/README.md) | Alternativy: Airflow vs Prefect vs Dagster (analyticky) |
+### PoCs — co jsme overili
 
-### Ostatni
+| # | Adresar | Hypoteza | Vysledek |
+|---|---------|----------|----------|
+| 01 | [poc01_automotive_etl](pocs/poc01_automotive_etl/README.md) | Airflow zvladne batch ETL ze stroju (CSV+JSON) | **OVERENO** — extract, transform, load do CSV+SQLite funguje |
+| 02 | [poc02_edge_worker](pocs/poc02_edge_worker/README.md) | Tasky lze spoustet na remote Edge Workeru | **OVERENO** — edge task bezi na jinem hostname nez centrala |
+| 03 | [poc03_edge_etl](pocs/poc03_edge_etl/README.md) | Extract+transform na lince, load na centrale | **OVERENO** — Varianta B funguje, data prenesena pres XCom |
+| 04 | [poc04_monitoring](pocs/poc04_monitoring/README.md) | Prometheus + Grafana pro infrastrukturni metriky | **OVERENO** — StatsD → statsd-exporter → Prometheus → Grafana (19 panelu) |
+| 05 | [poc05_monitoring_zabbix](pocs/poc05_monitoring_zabbix/README.md) | Zabbix pro business monitoring (health, DAG stavy) | **OVERENO** — HTTP Agent → REST API, built-in alerting s eskalaci |
+| 06 | [poc06_alternatives](pocs/poc06_alternatives/README.md) | Existuje lepsi alternativa nez Airflow? | **NE** — Airflow jediny s nativnim Edge Workerem; Prefect/Dagster nemaji edge koncept |
 
-| Adresar | Popis |
-|---------|-------|
-| [analyses/](analyses/) | Globalni analyzy (Airflow vs NiFi, zadani, monitoring, ...) |
-| [guides/ANA-01](guides/ANA-01_testovaci_strategie.md) | Testovaci strategie pro gudXX laboratorie |
+Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuje vsechny.
 
-## Klicova zjisteni
+### Analyzy — co jsme se dozvedeli
 
-**Windows** - nativne nefunguje (POSIX only). Reseni: Docker Desktop (doporuceno) nebo WSL2.
+| Analyza | Tema | Hlavni zaver |
+|---------|------|-------------|
+| [ANA-01](analyses/ANA-01_poc_airflow_vs_nifi.md) | Airflow vs NiFi | Pro batch ETL staci Airflow; NiFi az pri streaming pozadavku |
+| [ANA-02](analyses/ANA-02_automotive_etl_zadani.md) | Vstupni zadani | Stroje → Windows PC → batch processing; formaty/volume/latence nezname |
+| [ANA-03](analyses/ANA-03_airflow_vs_nifi_detail.md) | NiFi detail | NiFi pridava zbytecnou komplexitu pro batch; Airflow pokryva vsechny I/O formaty |
+| [ANA-04](analyses/ANA-04_edge_worker_architektura.md) | Edge Worker arch. | edge3 provider, HTTP-only komunikace; Windows = experimental (reseni: WSL2/Docker) |
+| [ANA-05](analyses/ANA-05_edge_etl_flow_design.md) | Edge ETL design | Varianta B (edge=extract+transform, central=load) — skalovatelne, schema contract |
+| [ANA-06](analyses/ANA-06_rest_api.md) | REST API v2 | JWT auth, kompletni CRUD, URL encoding run_id; health check bez autentizace |
+| [ANA-07](analyses/ANA-07_prezentace_architekt.md) | Prezentace | 3-urovnova prezentace (business, tech, deep-detail) |
+| [ANA-08](analyses/ANA-08_monitoring.md) | Prometheus+Grafana | StatsD → exporter → Prometheus PULL; 4 typy metrik, 19 panelu |
+| [ANA-09](analyses/ANA-09_monitoring_zabbix.md) | Zabbix | HTTP Agent → REST API; built-in eskalace; doplnuje Prometheus |
+| [ANA-10](analyses/ANA-10_logging.md) | Logovani | Edge Worker: chunk upload (HTTP POST na centralu); 5 pristupu od simple po ELK |
+| [KAD-01](analyses/KAD-01_code_first_orchestrace.md) | Code-first | Python DAGy v Gitu; GUI jen pro monitoring — ACCEPTED |
 
-**Integrace s Apache NiFi** - neexistuje oficialni provider. Airflow = batch orchestrace, NiFi = real-time data flow. Lze kombinovat pres REST API (`HttpOperator`, `nipyapi`) nebo sensor pattern (NiFi zapise -> Airflow senzor detekuje).
+Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_podpora_windows.md), [gud02/ANA-02](guides/gud02_install_standalone/analyses/ANA-02_standalone_architektura.md), [guides/ANA-01](guides/ANA-01_testovaci_strategie.md), [poc06/ANA-01](pocs/poc06_alternatives/analyses/ANA-01_srovnani_orchestratoru.md)
 
-**Airflow vs NiFi pro batch ETL** - pro cyklicky/scheduled ETL (DB, CSV, JSON, REST API) **staci samotny Airflow**. NiFi pridava hodnotu az pri real-time/streaming pozadavcich. Pro batch by prinesl zbytecnou komplexitu (dalsi infrastruktura, 2 nastroje na udrzbu, strmejsi krivka uceni). Detaily viz [ANA-01](analyses/ANA-01_poc_airflow_vs_nifi.md).
+## Klicova architektonicka rozhodnuti
 
-**Airflow vs Prefect vs Dagster** - Airflow je nejzralejsi volba pro enterprise batch orchestraci. Prefect a Dagster jsou moderni alternativy, ale nemaji edge/distributed worker support. Detaily viz [poc06/ANA-01](pocs/poc06_alternatives/analyses/ANA-01_srovnani_orchestratoru.md).
+1. **Orchestrator**: Airflow (jediny s nativnim Edge Workerem pro on-premise)
+2. **Pristup**: Code-first (Python DAGy v Gitu, ne GUI nastroje)
+3. **Distribuce**: Central Linux server + Edge Worker na lince (HTTP-only, bez DB/Redis)
+4. **ETL flow**: Edge = extract + transform (zna syrova data), Central = load (univerzalni handlery)
+5. **Data transfer**: XCom (PoC) → sdileny storage nebo REST API (produkce)
+6. **Monitoring**: Prometheus+Grafana (infra metriky) + Zabbix (business alerting, pokud uz bezi)
+7. **Logging**: Edge3 chunk upload (automaticky s edge3 providerem)
+
+## Co zbyva zjistit / Open Questions
+
+### Produkce — kriticke
+
+| # | Otazka | Proc je dulezita | Mozny smer |
+|---|--------|-----------------|------------|
+| OP-01 | **Idempotence ETL** — jak resit duplicity pri opakovanem spusteni? | Kazdy retry/rerun prida duplicitni data do DB | UPSERT pattern, truncate+insert, nebo dedup po loadu |
+| OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | edge3 na Windows je experimental (Task SDK nefunguje) | WSL2, Docker na Windows, nebo mini-Linux PC na lince |
+| OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom ma size limit, data jdou pres metadata DB | Sdileny storage (SMB/NFS), S3-compatible (MinIO), nebo REST API |
+| OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | Certifikaty, reverse proxy (nginx), nebo VPN |
+| OP-05 | **Disaster recovery** — zaloha metadata DB | PostgreSQL je SPOF, ztrata = ztrata historie vsech runu | pg_dump cronjob, streaming replication, nebo managed DB |
+
+### Skalovani — stredni priorita
+
+| # | Otazka | Poznamka |
+|---|--------|----------|
+| OP-06 | Kolik stroju/edge workeru zvladne jeden central server? | Zatim testovano s 1 edge workerem a 2 stroji |
+| OP-07 | Jake jsou realne datove objemy a formaty? | ANA-02 definuje zadani, ale konkretni formaty nezname |
+| OP-08 | Jak resit schema versioning (edge ↔ central kontrakt)? | Novy stroj = novy edge kod; jak zajistit zpetnou kompatibilitu? |
+
+### Provoz — nizka priorita (az pri nasazeni)
+
+| # | Otazka | Poznamka |
+|---|--------|----------|
+| OP-09 | Kdo udrzuje DAGy — DevOps nebo vyvojari? | Code-first vyzaduje Python znalost |
+| OP-10 | Jak resit CI/CD pro DAGy? | Git → test → deploy do dags/ volume |
+| OP-11 | Alerting — Zabbix eskalace nebo AlertManager? | Zavisi na existujici infrastrukture zakaznika |
 
 ## Next steps
 
-- Dalsi iterace poc03: idempotence (UPSERT misto INSERT), vice stroju, realne formaty dat
-- Prezentace vysledku architektovi (ANA-01 + ANA-02 + poc03 validace)
+### Faze 1 — Doplneni discovery (pred prezentaci)
 
-## Analyzy
+- [ ] **OP-02**: Proverit moznosti nasazeni Edge Workeru na Windows (WSL2 vs Docker vs mini-Linux)
+- [ ] **OP-03**: PoC pro nahrazeni XCom (sdileny storage nebo MinIO)
+- [ ] **OP-07**: Zjistit realne datove formaty a objemy od zakaznika
 
-### Globalni
+### Faze 2 — Produkcionalizace (po schvaleni architektury)
 
-- [ANA-01: Airflow vs NiFi pro batch ETL](analyses/ANA-01_poc_airflow_vs_nifi.md)
-- [ANA-02: Automotive ETL - vstupni zadani](analyses/ANA-02_automotive_etl_zadani.md)
-- [ANA-03: Airflow vs NiFi - detail](analyses/ANA-03_airflow_vs_nifi_detail.md)
-- [ANA-04: Edge Worker architektura](analyses/ANA-04_edge_worker_architektura.md)
-- [ANA-05: Edge ETL - navrh flow](analyses/ANA-05_edge_etl_flow_design.md)
-- [ANA-06: REST API v2](analyses/ANA-06_rest_api.md)
-- [ANA-07: Prezentace pro architekta](analyses/ANA-07_prezentace_architekt.md)
-- [ANA-08: Monitoring (Prometheus + Grafana)](analyses/ANA-08_monitoring.md)
-- [ANA-09: Monitoring (Zabbix)](analyses/ANA-09_monitoring_zabbix.md)
-- [ANA-10: Logovani (vcetne Edge Workeru)](analyses/ANA-10_logging.md)
-- [KAD-01: Code-first orchestrace](analyses/KAD-01_code_first_orchestrace.md)
+- [ ] **OP-01**: Implementovat idempotentni ETL (UPSERT pattern)
+- [ ] **OP-04**: SSL/TLS pro edge-to-central komunikaci
+- [ ] **OP-05**: Backup strategie pro PostgreSQL metadata DB
+- [ ] **OP-10**: CI/CD pipeline pro DAGy (lint → test → deploy)
 
-### Guides
+### Faze 3 — Prezentace
 
-- [guides/ANA-01: Testovaci strategie](guides/ANA-01_testovaci_strategie.md)
-- [gud02/ANA-01: Podpora Windows](guides/gud02_install_standalone/analyses/ANA-01_podpora_windows.md)
-- [gud02/ANA-02: Standalone architektura](guides/gud02_install_standalone/analyses/ANA-02_standalone_architektura.md)
-
-### PoCs
-
-- [poc06/ANA-01: Airflow vs Prefect vs Dagster](pocs/poc06_alternatives/analyses/ANA-01_srovnani_orchestratoru.md)
+- [ ] Pripravit prezentaci pro architekta (zaklad viz [ANA-07](analyses/ANA-07_prezentace_architekt.md))
+- [ ] Zahrnout: validovane PoC vysledky, architektonicka rozhodnuti, open questions, dalsi kroky
