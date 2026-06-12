@@ -6,31 +6,31 @@ Apache Airflow — discovery faze pro architekta. Automotive use case (batch ETL
 
 ## Struktura
 
-- `gudX_*/` — guides (instalace, konfigurace)
+- `gudXX_*/` — guides (instalace, konfigurace)
 - `tutX_*/` — tutorials (uceni)
-- `pocX_*/` — proof of concept (overeni hypotezy)
+- `pocXX_*/` — proof of concept (overeni hypotezy)
 - `analyses/ANA-XX_*.md` — globalni analyzy
-- `pocX/analyses/ANA-XX_*.md` — lokalni analyzy specificke pro dany PoC
+- `pocXX/analyses/ANA-XX_*.md` — lokalni analyzy specificke pro dany PoC
 
 ## Pravidla pro praci
 
 ### Dokumentace
 - **README.md** = high-level, strucny. Na detaily odkazovat do `analyses/*.md` nebo zdrojovych souboru.
-- Kazdy `pocX/README.md` musi zacinat kapitolou `## Popis` (1-3 vety: co chceme overit, ceho chceme dosahnout).
+- Kazdy `pocXX/README.md` musi zacinat kapitolou `## Popis` (1-3 vety: co chceme overit, ceho chceme dosahnout).
 - **Analyzy**: `analyses/ANA-XX_<nazev>.md` format. Obsahuji detailni technicke informace.
 - Jazyk dokumentace: **cestina** (bez diakritiky v souborech).
 
 ### Skripty
-- Kazdy `pocX/` musi mit `run.ps1` (PowerShell skript pro spusteni stacku).
-- Kazdy pocX ma vlastni `docker-compose.yaml` a `Dockerfile`.
+- Kazdy `pocXX/` musi mit `run.ps1` (PowerShell skript pro spusteni stacku).
+- Kazdy pocXX ma vlastni `docker-compose.yaml` a `Dockerfile`.
 
 ### Chyby a troubleshooting
-- Vsechny chyby zapisovat do `poc1_automotive_etl/analyses/ANA-01_troubleshooting.md`.
+- Vsechny chyby zapisovat do `poc01_automotive_etl/analyses/ANA-01_troubleshooting.md`.
 - Rozlisovat: **FATAL** (chyba, ktera nedava smysl, musi se hledat reseni) vs **WARNING** (spatny predpoklad, jina verze).
 - U kazde chyby: Chyba → Pricina → Reseni (s prikladem kodu).
 
 ### Novy PoC
-- Novy adresar `pocX_<nazev>/` se svym docker-compose.
+- Novy adresar `pocXX_<nazev>/` se svym docker-compose.
 - Pokud vychazi z predchoziho PoC, zkopirovat DAGy a data, ne celou strukturu.
 - Pridat do root `README.md` tabulky i do seznamu analyz.
 
@@ -46,11 +46,11 @@ Apache Airflow — discovery faze pro architekta. Automotive use case (batch ETL
 
 ## Workflow: zpracovani noveho tematu
 
-Kdyz uzivatel zada "prover tema X" nebo "priprav pocX pro tema X", postupuj takto:
+Kdyz uzivatel zada "prover tema X" nebo "priprav pocXX pro tema X", postupuj takto:
 
 ### Faze 1: Zalozeni struktury
 
-1. Vytvorit adresar (`pocX_<nazev>/` nebo relevantni umisteni)
+1. Vytvorit adresar (`pocXX_<nazev>/` nebo relevantni umisteni)
 2. Vytvorit `README.md` s `## Popis` (1-3 vety: co overujeme, ceho chceme dosahnout)
 3. Vytvorit podadresare (`dags/`, `config/`, `data/`, `scripts/`, `analyses/`)
 
@@ -98,7 +98,7 @@ Kdyz uzivatel zada "prover tema X" nebo "priprav pocX pro tema X", postupuj takt
 ### Priklad vysledne struktury
 
 ```
-pocX_tema/
+pocXX_tema/
   README.md                          # High-level: Popis, architektura, pristupy, validace
   run.ps1                            # Spusteni stacku
   docker-compose.yaml
@@ -122,7 +122,7 @@ pocX_tema/
 - `ANA-XX` — Analysis (zpracovana analyza)
 - `OP-XX` — Open Question (nezodpovezena otazka)
 - `KAD-XX` — Key Architecture Decision (klicove architektonicke rozhodnuti)
-- Cislovani: v ramci adresare kde lezi (pocX/analyses/ nebo globalni analyses/)
+- Cislovani: v ramci adresare kde lezi (pocXX/analyses/ nebo globalni analyses/)
 - Globalni analyzy (across PoCs): `analyses/ANA-XX_*.md` v root projektu
 - Globalni KAD: `analyses/KAD-XX_*.md` v root projektu
 

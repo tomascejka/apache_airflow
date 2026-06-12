@@ -1,14 +1,14 @@
 """
 Shared fixtures for Airflow e2e/integration tests.
 
-Each test module defines STACK_DIR pointing to its gudX directory.
+Each test module defines STACK_DIR pointing to its gudXX directory.
 The `stack` fixture starts docker compose, waits for scheduler,
 runs tests, then tears down.
 
 Usage:
     cd guides
-    pytest pytests/e2e/test_gud4.py -v
-    pytest pytests/e2e/ -v --tb=short   # all gudX serially
+    pytest pytests/e2e/test_gud04.py -v
+    pytest pytests/e2e/ -v --tb=short   # all gudXX serially
 """
 
 import json

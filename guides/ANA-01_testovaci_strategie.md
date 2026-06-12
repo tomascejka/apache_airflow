@@ -1,8 +1,8 @@
-# ANA-01: Testovaci strategie pro gudX laboratorie
+# ANA-01: Testovaci strategie pro gudXX laboratorie
 
 ## Kontext
 
-Kazda gudX laborator demonstruje Airflow koncepty. Cil: automatizovane overeni, ze DAGy funguji spravne — `test.ps1` ktery spusti po `run.ps1`.
+Kazda gudXX laborator demonstruje Airflow koncepty. Cil: automatizovane overeni, ze DAGy funguji spravne — `test.ps1` ktery spusti po `run.ps1`.
 
 ## Spolecny testovaci framework
 
@@ -36,9 +36,9 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ---
 
-## Analyza po gudX
+## Analyza po gudXX
 
-### gud4_python_operator
+### gud04_python_operator
 
 **Cile:**
 1. PythonOperator spusti python_callable s op_args/op_kwargs
@@ -60,7 +60,7 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ---
 
-### gud5_xcom_variables_params
+### gud05_xcom_variables_params
 
 **Cile:**
 1. XCom push/pull funguje (explicitni i Jinja)
@@ -84,7 +84,7 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ---
 
-### gud6_branching_trigger_rules
+### gud06_branching_trigger_rules
 
 **Cile:**
 1. BranchPythonOperator vybere jednu vetev, druha je skipped
@@ -106,7 +106,7 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ---
 
-### gud7_sensors
+### gud07_sensors
 
 **Cile:**
 1. FileSensor detekuje soubor a spusti downstream
@@ -130,7 +130,7 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ---
 
-### gud8_error_handling
+### gud08_error_handling
 
 **Cile:**
 1. Task s retries se opakuje pri selhani (videt up_for_retry stav)
@@ -152,7 +152,7 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ---
 
-### gud9_taskgroups_dynamic
+### gud09_taskgroups_dynamic
 
 **Cile:**
 1. TaskGroup seskupi tasky vizualne (task_id prefix: "extract.extract_csv")
@@ -220,14 +220,14 @@ docker compose exec airflow-scheduler airflow pools list -o json
 
 ## Souhrnna matice testovatelnosti
 
-| gudX | Deterministicke? | Externi zavislosti? | Cas | Obtiznost test.ps1 |
+| gudXX | Deterministicke? | Externi zavislosti? | Cas | Obtiznost test.ps1 |
 |------|-----------------|--------------------|----|-------------------|
-| **gud4** | ANO | NE | <10s | SNADNE |
-| **gud5** | ANO | NE (env vars v compose) | <15s | SNADNE |
-| **gud6** | CASTECNE | NE | <10s | STREDNI (invarianty misto presnych hodnot) |
-| **gud7** | ANO (ale s externi akci) | ANO (soubor, timing) | 15-120s | SLOZITE (sensor orchestrace) |
-| **gud8** | CASTECNE | NE | 15-120s | STREDNI (zamerne faily, nedeterministicky retry) |
-| **gud9** | ANO | NE | <15s | SNADNE |
+| **gud04** | ANO | NE | <10s | SNADNE |
+| **gud05** | ANO | NE (env vars v compose) | <15s | SNADNE |
+| **gud06** | CASTECNE | NE | <10s | STREDNI (invarianty misto presnych hodnot) |
+| **gud07** | ANO (ale s externi akci) | ANO (soubor, timing) | 15-120s | SLOZITE (sensor orchestrace) |
+| **gud08** | CASTECNE | NE | 15-120s | STREDNI (zamerne faily, nedeterministicky retry) |
+| **gud09** | ANO | NE | <15s | SNADNE |
 | **gud10** | ANO (ale slozite chovani) | NE | 30-120s | STREDNI (dataset chain, catchup timing) |
 | **gud11** | ANO (ale concurrency tezko overit) | NE | 25-35s | STREDNI (pool existence OK, poradi slozite) |
 

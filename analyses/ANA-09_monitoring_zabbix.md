@@ -57,7 +57,7 @@ Zabbix ma **built-in eskalace** — pokud problem neni vyreseny do X minut, eska
 
 ## 3 zpusoby integrace Airflow + Zabbix
 
-### Zpusob 1: HTTP Agent → REST API (pouzivame v poc5)
+### Zpusob 1: HTTP Agent → REST API (pouzivame v poc05)
 
 ```
 Zabbix Server ──HTTP GET──→ Airflow API (:8080/api/v2/...)
@@ -127,13 +127,13 @@ Airflow ──StatsD UDP──→ statsd-zabbix-backend ──→ Zabbix Server 
 **Co monitoruje**: Stejne infrastrukturni metriky jako Prometheus (scheduler heartbeat, executor running/queued, pool slots, task duration...).
 
 **Jak funguje**:
-1. Airflow odesila StatsD metriky (stejne nastaveni jako v poc4)
+1. Airflow odesila StatsD metriky (stejne nastaveni jako v poc04)
 2. `statsd-zabbix-backend` (Node.js) prijima UDP, preformatuje a posle do Zabbix pres `zabbix_sender` protokol
 3. Zabbix prijme jako **trapper items**
 
 **Konfigurace**:
 ```yaml
-# Airflow env (stejne jako poc4)
+# Airflow env (stejne jako poc04)
 AIRFLOW__METRICS__STATSD_ON: 'true'
 AIRFLOW__METRICS__STATSD_HOST: 'statsd-server'
 AIRFLOW__METRICS__STATSD_PORT: '8125'
@@ -184,7 +184,7 @@ Zabbix Server ──HTTP GET──→ http://airflow:8080/api/v2/monitor/health
 
 ## Srovnani Prometheus vs Zabbix pro Airflow
 
-| Aspekt | Prometheus + Grafana (poc4) | Zabbix (poc5) |
+| Aspekt | Prometheus + Grafana (poc04) | Zabbix (poc05) |
 |--------|---------------------------|---------------|
 | **Typ monitoringu** | Infrastrukturni metriky (gauge, counter, histogram) | Business monitoring (DAG uspel/selhal) + health |
 | **Transport** | StatsD UDP → exporter → scrape | HTTP Agent → REST API |
@@ -206,4 +206,4 @@ Oboji muze bezet paralelne — Airflow zvlada StatsD i REST API soucasne.
 
 ## Implementace
 
-Viz [poc5_monitoring_zabbix](../poc5_monitoring_zabbix/README.md).
+Viz [poc05_monitoring_zabbix](../poc05_monitoring_zabbix/README.md).

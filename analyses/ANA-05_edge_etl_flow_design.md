@@ -6,7 +6,7 @@ Jak rozdelit praci mezi Edge Worker (linka) a Central Server?
 
 ## Varianty
 
-### Varianta A: Edge=Extract, Central=Transform+Load (soucasny poc3)
+### Varianta A: Edge=Extract, Central=Transform+Load (soucasny poc03)
 
 ```
 Edge:     cte syrova data --> posle RAW na central
@@ -47,7 +47,7 @@ Realisticky scener (dle konzultace s architektem): kazdy edge worker bude muset 
 
 | Zpusob | Vyhoda | Nevyhoda |
 |--------|--------|----------|
-| **XCom** (soucasny poc3) | Jednoduche, v ramci Airflow | Limit na velikost, jde pres metadata DB |
+| **XCom** (soucasny poc03) | Jednoduche, v ramci Airflow | Limit na velikost, jde pres metadata DB |
 | **Soubor na sdilenem storage** | Zadny limit velikosti | Vyzaduje sdileny filesystem/S3 |
 | **REST API (POST)** | Cisty, decoupleny | Nutne implementovat endpoint |
 | **Soubor + sensor** | Edge zapise soubor, central senzor detekuje | Jednoduche, robustni |
@@ -56,7 +56,7 @@ Pro PoC staci XCom. Pro produkci pravdepodobne soubor na sdilenem storage nebo R
 
 ## Implementace
 
-**Varianta B implementovana v poc3** (`poc3_edge_etl/dags/edge_automotive_etl.py`):
+**Varianta B implementovana v poc03** (`poc03_edge_etl/dags/edge_automotive_etl.py`):
 - Edge: `extract_transform_stroj_1` (CSV -> std. format), `extract_transform_stroj_2` (JSON -> std. format)
 - Central: `load_to_csv`, `load_to_db` - univerzalni handlery, nezavisle na raw formatech
 - Prenos dat: XCom (pro PoC dostacujici)
