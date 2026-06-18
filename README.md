@@ -79,7 +79,10 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-08](analyses/ANA-08_monitoring.md) | Prometheus+Grafana | StatsD → exporter → Prometheus PULL; 4 typy metrik, 19 panelu |
 | [ANA-09](analyses/ANA-09_monitoring_zabbix.md) | Zabbix | HTTP Agent → REST API; built-in eskalace; doplnuje Prometheus |
 | [ANA-10](analyses/ANA-10_logging.md) | Logovani | Edge Worker: chunk upload (HTTP POST na centralu); 5 pristupu od simple po ELK |
+| [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md) | Edge na Windows | Nativni Windows broken; Docker na Win (PoC) nebo mini-Linux PC (produkce) |
 | [KAD-01](analyses/KAD-01_code_first_orchestrace.md) | Code-first | Python DAGy v Gitu; GUI jen pro monitoring — ACCEPTED |
+
+Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md) (oficialni docs), [DISC-02](analyses/DISC-02_github_edge_windows_broken.md) (GitHub issue), [DISC-03](analyses/DISC-03_wsl2_production.md) (WSL2), [DISC-04](analyses/DISC-04_docker_na_windows.md) (Docker), [DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (mini-Linux PC)
 
 Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_podpora_windows.md), [gud02/ANA-02](guides/gud02_install_standalone/analyses/ANA-02_standalone_architektura.md), [guides/ANA-01](guides/ANA-01_testovaci_strategie.md), [poc06/ANA-01](pocs/poc06_alternatives/analyses/ANA-01_srovnani_orchestratoru.md)
 
@@ -100,7 +103,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 | # | Otazka | Proc je dulezita | Mozny smer |
 |---|--------|-----------------|------------|
 | OP-01 | **Idempotence ETL** — jak resit duplicity pri opakovanem spusteni? | Kazdy retry/rerun prida duplicitni data do DB | UPSERT pattern, truncate+insert, nebo dedup po loadu |
-| OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | edge3 na Windows je experimental (Task SDK nefunguje) | WSL2, Docker na Windows, nebo mini-Linux PC na lince |
+| OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | Nativni Windows broken (issue #55297); Windows neni podporovany target | **ANALYZOVANO** viz [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md): Docker na Win (PoC) nebo mini-Linux PC (produkce) |
 | OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom ma size limit, data jdou pres metadata DB | Sdileny storage (SMB/NFS), S3-compatible (MinIO), nebo REST API |
 | OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | Certifikaty, reverse proxy (nginx), nebo VPN |
 | OP-05 | **Disaster recovery** — zaloha metadata DB | PostgreSQL je SPOF, ztrata = ztrata historie vsech runu | pg_dump cronjob, streaming replication, nebo managed DB |
@@ -125,7 +128,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 
 ### Faze 1 — Doplneni discovery (pred prezentaci)
 
-- [ ] **OP-02**: Proverit moznosti nasazeni Edge Workeru na Windows (WSL2 vs Docker vs mini-Linux)
+- [x] **OP-02**: Proverit moznosti nasazeni Edge Workeru na Windows → [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md)
 - [ ] **OP-03**: PoC pro nahrazeni XCom (sdileny storage nebo MinIO)
 - [ ] **OP-07**: Zjistit realne datove formaty a objemy od zakaznika
 
