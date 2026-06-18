@@ -80,9 +80,10 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-09](analyses/ANA-09_monitoring_zabbix.md) | Zabbix | HTTP Agent → REST API; built-in eskalace; doplnuje Prometheus |
 | [ANA-10](analyses/ANA-10_logging.md) | Logovani | Edge Worker: chunk upload (HTTP POST na centralu); 5 pristupu od simple po ELK |
 | [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md) | Edge na Windows | Nativni Windows broken; Docker na Win (PoC) nebo mini-Linux PC (produkce) |
+| [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) | Nahrada XCom | XCom Object Storage Backend + MinIO = konfiguracni zmena, DAGy beze zmeny |
 | [KAD-01](analyses/KAD-01_code_first_orchestrace.md) | Code-first | Python DAGy v Gitu; GUI jen pro monitoring — ACCEPTED |
 
-Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md) (oficialni docs), [DISC-02](analyses/DISC-02_github_edge_windows_broken.md) (GitHub issue), [DISC-03](analyses/DISC-03_wsl2_production.md) (WSL2), [DISC-04](analyses/DISC-04_docker_na_windows.md) (Docker), [DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (mini-Linux PC)
+Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md)–[DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (Edge na Windows), [DISC-06](analyses/DISC-06_xcom_object_storage_backend.md)–[DISC-08](analyses/DISC-08_shared_volumes_antipattern.md) (XCom nahrada)
 
 Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_podpora_windows.md), [gud02/ANA-02](guides/gud02_install_standalone/analyses/ANA-02_standalone_architektura.md), [guides/ANA-01](guides/ANA-01_testovaci_strategie.md), [poc06/ANA-01](pocs/poc06_alternatives/analyses/ANA-01_srovnani_orchestratoru.md)
 
@@ -104,7 +105,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 |---|--------|-----------------|------------|
 | OP-01 | **Idempotence ETL** — jak resit duplicity pri opakovanem spusteni? | Kazdy retry/rerun prida duplicitni data do DB | UPSERT pattern, truncate+insert, nebo dedup po loadu |
 | OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | Nativni Windows broken (issue #55297); Windows neni podporovany target | **ANALYZOVANO** viz [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md): Docker na Win (PoC) nebo mini-Linux PC (produkce) |
-| OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom ma size limit, data jdou pres metadata DB | Sdileny storage (SMB/NFS), S3-compatible (MinIO), nebo REST API |
+| OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom data zatezuji metadata DB (SPOF) | **ANALYZOVANO** viz [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md): XCom Object Storage Backend + MinIO (konfiguracni zmena, DAGy beze zmeny) |
 | OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | Certifikaty, reverse proxy (nginx), nebo VPN |
 | OP-05 | **Disaster recovery** — zaloha metadata DB | PostgreSQL je SPOF, ztrata = ztrata historie vsech runu | pg_dump cronjob, streaming replication, nebo managed DB |
 
@@ -129,7 +130,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 ### Faze 1 — Doplneni discovery (pred prezentaci)
 
 - [x] **OP-02**: Proverit moznosti nasazeni Edge Workeru na Windows → [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md)
-- [ ] **OP-03**: PoC pro nahrazeni XCom (sdileny storage nebo MinIO)
+- [x] **OP-03**: Discovery nahrazeni XCom → [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) (dalsi krok: poc07 s MinIO)
 - [ ] **OP-07**: Zjistit realne datove formaty a objemy od zakaznika
 
 ### Faze 2 — Produkcionalizace (po schvaleni architektury)
