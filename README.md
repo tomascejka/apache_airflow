@@ -102,7 +102,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 
 1. **Orchestrator**: Airflow (jediny s nativnim Edge Workerem pro on-premise)
 2. **Pristup**: Code-first (Python DAGy v Gitu, ne GUI nastroje)
-3. **Distribuce**: Central Linux server + Edge Worker na lince (HTTP-only, bez DB/Redis)
+3. **Distribuce**: Central Linux server + Edge Worker na lince — Docker na Windows nebo mini-Linux PC ([ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md))
 4. **ETL flow**: Edge = extract + transform (zna syrova data), Central = load (univerzalni handlery)
 5. **Data transfer**: XCom (PoC) → sdileny storage nebo REST API (produkce)
 6. **Monitoring**: Prometheus+Grafana (infra metriky) + Zabbix (business alerting, pokud uz bezi)
