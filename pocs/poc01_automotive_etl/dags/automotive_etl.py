@@ -55,7 +55,7 @@ def transform(**context):
 
     all_data = data_1 + data_2
     for row in all_data:
-        row["processed_at"] = datetime.now().isoformat()
+        row["processed_at"] = context["logical_date"].isoformat()
         # normalizace statusu
         status_map = {"ok": "ok", "running": "ok", "warn": "warning", "warning": "warning", "error": "critical", "critical": "critical"}
         row["status_normalized"] = status_map.get(row["status"], row["status"])
@@ -88,11 +88,16 @@ def load_to_db(**context):
             device_id TEXT,
             temperature REAL,
             status_normalized TEXT,
-            processed_at TEXT
+            processed_at TEXT,
+            UNIQUE(machine, device_id, timestamp)
         )
     """)
     conn.executemany(
-        "INSERT INTO measurements VALUES (?, ?, ?, ?, ?, ?)",
+        """INSERT INTO measurements VALUES (?, ?, ?, ?, ?, ?)
+           ON CONFLICT(machine, device_id, timestamp)
+           DO UPDATE SET temperature=excluded.temperature,
+                         status_normalized=excluded.status_normalized,
+                         processed_at=excluded.processed_at""",
         [(r["timestamp"], r["machine"], r["device_id"], r["temperature"], r["status_normalized"], r["processed_at"]) for r in data],
     )
     conn.commit()
