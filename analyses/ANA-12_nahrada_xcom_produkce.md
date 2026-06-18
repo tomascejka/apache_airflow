@@ -161,6 +161,52 @@ def load(path: ObjectStoragePath):
 | Migrace do cloudu | Trivialni (S3 API) | Slozita | Slozita | Trivialni (S3 API) |
 | Komplexita | Nizka | Stredni | Stredni | Stredni |
 
+## Proc to vubec resime (motivace)
+
+1. **Oddelit ETL data od metadata DB** — metadata DB (PostgreSQL) je runtime storage pro Airflow (scheduler, historie, UI). ETL data ze stroju tam nepatri — zatezuji SPOF komponentu necim, na co neni urcena.
+
+2. **Externi storage musi byt remote/shared** — edge worker a centrala jsou na ruznych strojich. Lokalni `file://` funguje jen kdyz vse bezi na jednom stroji (napr. v Docker Compose pro testovani).
+
+3. **Dve kategorie remote/shared storage:**
+
+```
+Object storage (S3 API pres HTTP):
+  ├── On-premise: MinIO, SeaweedFS, Garage     ← DOPORUCENO
+  └── Cloud: AWS S3, GCS, Azure Blob           ← DOPORUCENO
+  Proc: navrzeno pro sitovy pristup, HTTP protokol,
+        retry/atomicita, bez iluze lokalniho FS
+
+Network filesystem (NFS/SMB):
+  ├── NFS (Linux)                               ← FUNGUJE, ale krehke
+  └── SMB (Windows)                             ← FUNGUJE, ale krehke + POSIX issues
+  Proc ne: predstira lokalni FS, ale kazda operace = sitovy RPC call,
+           zadna atomicita, problemy pri ruznych sitich (edge ↔ central)
+```
+
+### Rizika NFS/SMB (proc neni doporuceno pro edge)
+
+Zdroj: Jarek Potiuk (Airflow PMC) — [DISC-08](DISC-08_shared_volumes_antipattern.md)
+
+NFS/SMB neni "deprecated" — je to fungujici technologie. Ale pro distribuovany edge scenar ma konkretni rizika:
+
+1. **Iluze lokalniho FS**: NFS/SMB predstira, ze je lokalni disk. Ve skutecnosti kazda operace (open, read, write, stat) = sitovy RPC call. Vyvojar to nevidi, ale latence se kumuluje.
+
+2. **Zadna atomicita zapisu**: kdyz edge worker zapisuje soubor (napr. 10MB CSV), central task ho muze zacit cist driv, nez je zapis dokonceny. Vysledek: corrupted/neuplna data. Object storage ma atomicky PUT — objekt je bud cely, nebo neexistuje.
+
+3. **Cache eviction**: NFS pouziva lokalni cache pro vykon. Ale s rostem poctu souboru se cache vyprazni a zacne continuous re-download. Vykon se nepredvidatelne zhorsuje.
+
+4. **Zadna konzistence across souboru**: pokud DAG zapisuje vic souboru soucasne, NFS nezarucuje, ze vsechny budou ve stejne verzi ve stejnem case. Muzes precist cast novych a cast starych dat.
+
+5. **SMB specificke problemy**: neumí chmod/chown (Airflow ocekava POSIX FS), problemy s file locking, pomalejsi nez NFS.
+
+6. **Sit mezi edge a centralou**: edge worker je typicky na jine siti (factory floor) nez centrala (server room). NFS pres WAN/VPN = vysoka latence, nespolehlivost, timeout pri vetsich souborech.
+
+7. **Cost explosion**: s rostem dat roste potreba IOPS. NFS servery se musi skalovat, coz neni levne a neni trivialni.
+
+**Na stejne LAN** (edge i centrala ve stejnem racku) muze NFS fungovat OK. Ale pro typicky edge scenar (ruzne site, ruzne stroje) je to krehke reseni.
+
+MinIO neni cloud — bezi lokalne jako 1 kontejner. Pouziva S3 API (HTTP), coz je stejny protokol jako cloudove sluzby. Vyhoda: funguje on-premise, a pri migraci do cloudu se zmeni jen connection string.
+
 ## Doporuceni
 
 ### Pro produkci: Varianta 1 (XCom Object Storage Backend + MinIO)
