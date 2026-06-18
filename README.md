@@ -80,6 +80,7 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-09](analyses/ANA-09_monitoring_zabbix.md) | Zabbix | HTTP Agent → REST API; built-in eskalace; doplnuje Prometheus |
 | [ANA-10](analyses/ANA-10_logging.md) | Logovani | Edge Worker: chunk upload (HTTP POST na centralu); 5 pristupu od simple po ELK |
 | [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md) | Edge na Windows | Nativni Windows broken; Docker na Win (PoC) nebo mini-Linux PC (produkce) |
+| [ANA-05a](analyses/ANA-05a_tasky_operace_airflow.md) | Tasky vs operace | Jak Airflow premysli; 5 operaci = 2 tasky; kdy rozdelit; role komponent |
 | [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) | Nahrada XCom | XCom Object Storage Backend = konfiguracni zmena, DAGy beze zmeny |
 | [ANA-12a](analyses/ANA-12a_object_storage_analyza.md) | Object Storage detail | MinIO CE archivovany → SeaweedFS; infra, bezpecnost, backup/recovery |
 | [ANA-12b](analyses/ANA-12b_typy_storage_srovnani.md) | Typy storage | Object vs file vs block vs primo do DB; proc object storage pro edge |

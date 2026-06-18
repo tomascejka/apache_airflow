@@ -43,16 +43,20 @@ Central:  sebere soubory od edge workeru --> preposlena do ext. systemu
 
 Realisticky scener (dle konzultace s architektem): kazdy edge worker bude muset udelat Extract + Transform, protoze zna strukturu svych dat. Load (ulozeni/odeslani) dela server.
 
-## Otevrena otazka: jak edge preda data serveru?
+## Jak edge preda data serveru? (VYRESENO)
 
-| Zpusob | Vyhoda | Nevyhoda |
-|--------|--------|----------|
-| **XCom** (soucasny poc03) | Jednoduche, v ramci Airflow | Limit na velikost, jde pres metadata DB |
-| **Soubor na sdilenem storage** | Zadny limit velikosti | Vyzaduje sdileny filesystem/S3 |
-| **REST API (POST)** | Cisty, decoupleny | Nutne implementovat endpoint |
-| **Soubor + sensor** | Edge zapise soubor, central senzor detekuje | Jednoduche, robustni |
+| Zpusob | Vyhoda | Nevyhoda | Status |
+|--------|--------|----------|--------|
+| **XCom** (poc03) | Jednoduche, v ramci Airflow | Limit velikosti, zatezuje metadata DB | PoC only |
+| **XCom Object Storage Backend** | Transparentni, zadna zmena DAGu | Dalsi kontejner (SeaweedFS) | **DOPORUCENO** |
+| **Sdileny filesystem (NFS/SMB)** | Zadny limit velikosti | Antipattern pro edge (viz ANA-12) | NE |
+| **Primo do cilove DB** | Nejkratsi cesta | Tight coupling, security riziko | Podminene |
 
-Pro PoC staci XCom. Pro produkci pravdepodobne soubor na sdilenem storage nebo REST API.
+**Reseni**: XCom Object Storage Backend + SeaweedFS. Detaily viz [ANA-12](ANA-12_nahrada_xcom_produkce.md) serie.
+
+## Detailni rozbor tasku a operaci
+
+Viz [ANA-05a](ANA-05a_tasky_operace_airflow.md) — jak Airflow premysli o taskach vs operacich, proc 5 logickych operaci = 2 tasky, kdy rozdelit na vic, role komponent.
 
 ## Implementace
 

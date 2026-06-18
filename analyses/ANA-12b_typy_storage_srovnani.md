@@ -160,6 +160,6 @@ Primo zapis do DB je legitimni volba pokud:
 
 ## Souvisejici analyzy
 
+- [ANA-05](ANA-05_edge_etl_flow_design.md) — Varianta B (edge=extract+transform, central=load), koncept prestupniho uloziste, jak premyslet o taskach
 - [ANA-12](ANA-12_nahrada_xcom_produkce.md) — proc nahrazujeme XCom, varianty prenosu
 - [ANA-12a](ANA-12a_object_storage_analyza.md) — volba storage (SeaweedFS), infra, bezpecnost, backup
-- [ANA-05](ANA-05_edge_etl_flow_design.md) — Varianta B (edge=extract+transform, central=load)
