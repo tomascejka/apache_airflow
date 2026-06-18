@@ -81,6 +81,7 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-10](analyses/ANA-10_logging.md) | Logovani | Edge Worker: chunk upload (HTTP POST na centralu); 5 pristupu od simple po ELK |
 | [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md) | Edge na Windows | Nativni Windows broken; Docker na Win (PoC) nebo mini-Linux PC (produkce) |
 | [ANA-05a](analyses/ANA-05a_tasky_operace_airflow.md) | Tasky vs operace | Jak Airflow premysli; 5 operaci = 2 tasky; kdy rozdelit; role komponent |
+| [ANA-13](analyses/ANA-13_idempotence_etl.md) | Idempotence ETL | UPSERT pattern; 4 strategie; zmena = 2 radky SQL + UNIQUE INDEX |
 | [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) | Nahrada XCom | XCom Object Storage Backend = konfiguracni zmena, DAGy beze zmeny |
 | [ANA-12a](analyses/ANA-12a_object_storage_analyza.md) | Object Storage detail | MinIO CE archivovany → SeaweedFS; infra, bezpecnost, backup/recovery |
 | [ANA-12b](analyses/ANA-12b_typy_storage_srovnani.md) | Typy storage | Object vs file vs block vs primo do DB; proc object storage pro edge |
@@ -106,7 +107,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 
 | # | Otazka | Proc je dulezita | Mozny smer |
 |---|--------|-----------------|------------|
-| OP-01 | **Idempotence ETL** — jak resit duplicity pri opakovanem spusteni? | Kazdy retry/rerun prida duplicitni data do DB | UPSERT pattern, truncate+insert, nebo dedup po loadu |
+| OP-01 | **Idempotence ETL** — jak resit duplicity pri opakovanem spusteni? | Kazdy retry/rerun prida duplicitni data do DB | **ANALYZOVANO** viz [ANA-13](analyses/ANA-13_idempotence_etl.md): UPSERT na natural key (machine_id, device_id, timestamp) |
 | OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | Nativni Windows broken (issue #55297); Windows neni podporovany target | **ANALYZOVANO** viz [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md): Docker na Win (PoC) nebo mini-Linux PC (produkce) |
 | OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom data zatezuji metadata DB (SPOF) | **ANALYZOVANO** viz [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md): XCom Object Storage Backend + MinIO (konfiguracni zmena, DAGy beze zmeny) |
 | OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | Certifikaty, reverse proxy (nginx), nebo VPN |
@@ -133,12 +134,12 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 ### Faze 1 — Doplneni discovery (pred prezentaci)
 
 - [x] **OP-02**: Proverit moznosti nasazeni Edge Workeru na Windows → [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md)
-- [x] **OP-03**: Discovery nahrazeni XCom → [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) (dalsi krok: poc07 s MinIO)
+- [x] **OP-03**: Discovery nahrazeni XCom → [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) (dalsi krok: poc07 se SeaweedFS)
 - [ ] **OP-07**: Zjistit realne datove formaty a objemy od zakaznika
 
 ### Faze 2 — Produkcionalizace (po schvaleni architektury)
 
-- [ ] **OP-01**: Implementovat idempotentni ETL (UPSERT pattern)
+- [x] **OP-01**: Discovery idempotence → [ANA-13](analyses/ANA-13_idempotence_etl.md) (UPSERT na natural key)
 - [ ] **OP-04**: SSL/TLS pro edge-to-central komunikaci
 - [ ] **OP-05**: Backup strategie pro PostgreSQL metadata DB
 - [ ] **OP-10**: CI/CD pipeline pro DAGy (lint → test → deploy)
