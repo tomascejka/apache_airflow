@@ -89,6 +89,9 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-15](analyses/ANA-15_backup_metadata_db.md) | Backup metadata DB | pg_dump cronjob (zaklad); PITR pro pokrocile; streaming replication pro HA |
 | [ANA-16](analyses/ANA-16_schema_versioning.md) | Schema versioning | Additive-only schema (doporuceno); tolerantni parser; schema kontrakt v Gitu |
 | [ANA-17](analyses/ANA-17_cicd_dag_deployment.md) | CI/CD pro DAGy | Lint (ruff) + DAG integrity test + git-sync deployment |
+| [ANA-18](analyses/ANA-18_skalovani_edge_workeru.md) | Skalovani | ~80 edge workeru testovano; 20 workeru = trivijalni zatez; PGBouncer pri 20+ |
+| [ANA-19](analyses/ANA-19_udrzba_dagu_tym.md) | Udrzba DAGu | 3 modely (1 clovek / infra vs DAGy / platform team); sablony pro novy stroj |
+| [ANA-20](analyses/ANA-20_alerting_strategie.md) | Alerting | Zabbix (business) + AlertManager (infra); eskalacni schema; zavisi na zakaznikovi |
 | [KAD-01](analyses/KAD-01_code_first_orchestrace.md) | Code-first | Python DAGy v Gitu; GUI jen pro monitoring — ACCEPTED |
 
 Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md)–[DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (Edge na Windows), [DISC-06](analyses/DISC-06_xcom_object_storage_backend.md)–[DISC-08](analyses/DISC-08_shared_volumes_antipattern.md) (XCom nahrada), [DISC-09](analyses/DISC-09_idempotence_etl_patterns.md)–[DISC-10](analyses/DISC-10_upsert_sql_syntaxe.md) (Idempotence), [DISC-11](analyses/DISC-11_tls_airflow_edge.md)–[DISC-12](analyses/DISC-12_tls_on_premise_certifikaty.md) (SSL/TLS)
@@ -121,7 +124,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 
 | # | Otazka | Poznamka |
 |---|--------|----------|
-| OP-06 | Kolik stroju/edge workeru zvladne jeden central server? | Zatim testovano s 1 edge workerem a 2 stroji |
+| OP-06 | ~~Skalovani edge workeru~~ | **ANALYZOVANO** viz [ANA-18](analyses/ANA-18_skalovani_edge_workeru.md): ~80 workeru testovano, 20 = trivijalni zatez |
 | OP-07 | Jake jsou realne datove objemy a formaty? | ANA-02 definuje zadani, ale konkretni formaty nezname |
 | OP-08 | ~~Schema versioning (edge ↔ central kontrakt)~~ | **ANALYZOVANO** viz [ANA-16](analyses/ANA-16_schema_versioning.md): additive-only schema, tolerantni parser |
 
@@ -129,27 +132,31 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 
 | # | Otazka | Poznamka |
 |---|--------|----------|
-| OP-09 | Kdo udrzuje DAGy — DevOps nebo vyvojari? | Code-first vyzaduje Python znalost |
+| OP-09 | ~~Kdo udrzuje DAGy~~ | **ANALYZOVANO** viz [ANA-19](analyses/ANA-19_udrzba_dagu_tym.md): Model A (maly tym), sablony pro novy stroj |
 | OP-10 | ~~CI/CD pro DAGy~~ | **ANALYZOVANO** viz [ANA-17](analyses/ANA-17_cicd_dag_deployment.md): lint + DAG integrity test + git-sync deploy |
-| OP-11 | Alerting — Zabbix eskalace nebo AlertManager? | Zavisi na existujici infrastrukture zakaznika |
+| OP-11 | ~~Alerting strategie~~ | **ANALYZOVANO** viz [ANA-20](analyses/ANA-20_alerting_strategie.md): Zabbix (business) + AlertManager (infra) |
 
 ## Next steps
 
-### Faze 1 — Doplneni discovery (pred prezentaci)
+### HOTOVO — Discovery (10/11 open questions analyzovano)
 
-- [x] **OP-02**: Proverit moznosti nasazeni Edge Workeru na Windows → [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md)
-- [x] **OP-03**: Discovery nahrazeni XCom → [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) (dalsi krok: poc07 se SeaweedFS)
+- [x] **OP-01**: Idempotence → [ANA-13](analyses/ANA-13_idempotence_etl.md)
+- [x] **OP-02**: Edge na Windows → [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md)
+- [x] **OP-03**: Nahrada XCom → [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md)
+- [x] **OP-04**: SSL/TLS → [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md)
+- [x] **OP-05**: Backup metadata DB → [ANA-15](analyses/ANA-15_backup_metadata_db.md)
+- [x] **OP-06**: Skalovani → [ANA-18](analyses/ANA-18_skalovani_edge_workeru.md)
+- [x] **OP-08**: Schema versioning → [ANA-16](analyses/ANA-16_schema_versioning.md)
+- [x] **OP-09**: Udrzba DAGu → [ANA-19](analyses/ANA-19_udrzba_dagu_tym.md)
+- [x] **OP-10**: CI/CD → [ANA-17](analyses/ANA-17_cicd_dag_deployment.md)
+- [x] **OP-11**: Alerting → [ANA-20](analyses/ANA-20_alerting_strategie.md)
+
+### OTEVRENE
+
 - [ ] **OP-07**: Zjistit realne datove formaty a objemy od zakaznika
+- [ ] **poc07**: Validace SeaweedFS + XCom Object Storage Backend s edge workerem
 
-### Faze 2 — Produkcionalizace (po schvaleni architektury)
+### Dalsi krok — Prezentace pro architekta
 
-- [x] **OP-01**: Discovery idempotence → [ANA-13](analyses/ANA-13_idempotence_etl.md) (UPSERT na natural key)
-- [x] **OP-04**: Discovery SSL/TLS → [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md) (Nginx reverse proxy + interni CA)
-- [x] **OP-05**: Backup metadata DB → [ANA-15](analyses/ANA-15_backup_metadata_db.md) (pg_dump cronjob jako zaklad)
-- [x] **OP-08**: Schema versioning → [ANA-16](analyses/ANA-16_schema_versioning.md) (additive-only schema)
-- [x] **OP-10**: CI/CD pro DAGy → [ANA-17](analyses/ANA-17_cicd_dag_deployment.md) (lint + test + git-sync)
-
-### Faze 3 — Prezentace
-
-- [ ] Pripravit prezentaci pro architekta (zaklad viz [ANA-07](analyses/ANA-07_prezentace_architekt.md))
-- [ ] Zahrnout: validovane PoC vysledky, architektonicka rozhodnuti, open questions, dalsi kroky
+- [ ] Pripravit prezentaci (zaklad viz [ANA-07](analyses/ANA-07_prezentace_architekt.md))
+- [ ] Zahrnout: 6 PoCs (vsechny PASS), 20 analyz, 7 KAD, otevrene otazky (OP-07)
