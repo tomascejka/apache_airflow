@@ -11,6 +11,10 @@ V poc03 edge worker predava data centrale pres XCom (= metadata DB). To neni vho
 
 Discovery zdroje: [DISC-06](DISC-06_xcom_object_storage_backend.md), [DISC-07](DISC-07_minio_on_premise.md), [DISC-08](DISC-08_shared_volumes_antipattern.md)
 
+**Navazujici analyza**: [ANA-12a](ANA-12a_object_storage_analyza.md) — detailni analyza volby storage (MinIO CE je archivovany → SeaweedFS), infra, bezpecnost, backup/recovery, architektura nasazeni.
+
+**POZOR**: MinIO Community Edition je od unora 2026 archivovany (repo "no longer maintained"). Doporucena nahrada: **SeaweedFS** (Apache 2.0, production-proven). Viz [ANA-12a](ANA-12a_object_storage_analyza.md) sekce 1.
+
 ## KOREKCE: Konfigurace, ne zmena kodu
 
 Puvodni predpoklad byl, ze nahrada XCom vyzaduje zmenu v kodu DAGu. **To neni pravda.**

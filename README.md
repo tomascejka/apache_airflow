@@ -80,7 +80,9 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-09](analyses/ANA-09_monitoring_zabbix.md) | Zabbix | HTTP Agent → REST API; built-in eskalace; doplnuje Prometheus |
 | [ANA-10](analyses/ANA-10_logging.md) | Logovani | Edge Worker: chunk upload (HTTP POST na centralu); 5 pristupu od simple po ELK |
 | [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md) | Edge na Windows | Nativni Windows broken; Docker na Win (PoC) nebo mini-Linux PC (produkce) |
-| [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) | Nahrada XCom | XCom Object Storage Backend + MinIO = konfiguracni zmena, DAGy beze zmeny |
+| [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) | Nahrada XCom | XCom Object Storage Backend = konfiguracni zmena, DAGy beze zmeny |
+| [ANA-12a](analyses/ANA-12a_object_storage_analyza.md) | Object Storage detail | MinIO CE archivovany → SeaweedFS; infra, bezpecnost, backup/recovery |
+| [ANA-12b](analyses/ANA-12b_typy_storage_srovnani.md) | Typy storage | Object vs file vs block vs primo do DB; proc object storage pro edge |
 | [KAD-01](analyses/KAD-01_code_first_orchestrace.md) | Code-first | Python DAGy v Gitu; GUI jen pro monitoring — ACCEPTED |
 
 Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md)–[DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (Edge na Windows), [DISC-06](analyses/DISC-06_xcom_object_storage_backend.md)–[DISC-08](analyses/DISC-08_shared_volumes_antipattern.md) (XCom nahrada)
