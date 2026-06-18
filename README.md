@@ -110,7 +110,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 | OP-01 | **Idempotence ETL** — jak resit duplicity pri opakovanem spusteni? | Kazdy retry/rerun prida duplicitni data do DB | **ANALYZOVANO** viz [ANA-13](analyses/ANA-13_idempotence_etl.md): UPSERT na natural key (machine_id, device_id, timestamp) |
 | OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | Nativni Windows broken (issue #55297); Windows neni podporovany target | **ANALYZOVANO** viz [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md): Docker na Win (PoC) nebo mini-Linux PC (produkce) |
 | OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom data zatezuji metadata DB (SPOF) | **ANALYZOVANO** viz [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md): XCom Object Storage Backend + MinIO (konfiguracni zmena, DAGy beze zmeny) |
-| OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | Certifikaty, reverse proxy (nginx), nebo VPN |
+| OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | **ANALYZOVANO** viz [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md): Nginx reverse proxy + self-signed (PoC) / interni CA (produkce) |
 | OP-05 | **Disaster recovery** — zaloha metadata DB | PostgreSQL je SPOF, ztrata = ztrata historie vsech runu | pg_dump cronjob, streaming replication, nebo managed DB |
 
 ### Skalovani — stredni priorita
@@ -140,7 +140,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 ### Faze 2 — Produkcionalizace (po schvaleni architektury)
 
 - [x] **OP-01**: Discovery idempotence → [ANA-13](analyses/ANA-13_idempotence_etl.md) (UPSERT na natural key)
-- [ ] **OP-04**: SSL/TLS pro edge-to-central komunikaci
+- [x] **OP-04**: Discovery SSL/TLS → [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md) (Nginx reverse proxy + interni CA)
 - [ ] **OP-05**: Backup strategie pro PostgreSQL metadata DB
 - [ ] **OP-10**: CI/CD pipeline pro DAGy (lint → test → deploy)
 
