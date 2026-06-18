@@ -85,9 +85,13 @@ Zavislosti PoCs: `poc01 → poc02 → poc03 → poc04/poc05`, `poc06` referencuj
 | [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md) | Nahrada XCom | XCom Object Storage Backend = konfiguracni zmena, DAGy beze zmeny |
 | [ANA-12a](analyses/ANA-12a_object_storage_analyza.md) | Object Storage detail | MinIO CE archivovany → SeaweedFS; infra, bezpecnost, backup/recovery |
 | [ANA-12b](analyses/ANA-12b_typy_storage_srovnani.md) | Typy storage | Object vs file vs block vs primo do DB; proc object storage pro edge |
+| [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md) | SSL/TLS | Nginx reverse proxy + TLS terminace; self-signed (PoC), interni CA (produkce) |
+| [ANA-15](analyses/ANA-15_backup_metadata_db.md) | Backup metadata DB | pg_dump cronjob (zaklad); PITR pro pokrocile; streaming replication pro HA |
+| [ANA-16](analyses/ANA-16_schema_versioning.md) | Schema versioning | Additive-only schema (doporuceno); tolerantni parser; schema kontrakt v Gitu |
+| [ANA-17](analyses/ANA-17_cicd_dag_deployment.md) | CI/CD pro DAGy | Lint (ruff) + DAG integrity test + git-sync deployment |
 | [KAD-01](analyses/KAD-01_code_first_orchestrace.md) | Code-first | Python DAGy v Gitu; GUI jen pro monitoring — ACCEPTED |
 
-Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md)–[DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (Edge na Windows), [DISC-06](analyses/DISC-06_xcom_object_storage_backend.md)–[DISC-08](analyses/DISC-08_shared_volumes_antipattern.md) (XCom nahrada)
+Discovery zdroje: [DISC-01](analyses/DISC-01_edge3_windows_official_docs.md)–[DISC-05](analyses/DISC-05_industrial_linux_pcs.md) (Edge na Windows), [DISC-06](analyses/DISC-06_xcom_object_storage_backend.md)–[DISC-08](analyses/DISC-08_shared_volumes_antipattern.md) (XCom nahrada), [DISC-09](analyses/DISC-09_idempotence_etl_patterns.md)–[DISC-10](analyses/DISC-10_upsert_sql_syntaxe.md) (Idempotence), [DISC-11](analyses/DISC-11_tls_airflow_edge.md)–[DISC-12](analyses/DISC-12_tls_on_premise_certifikaty.md) (SSL/TLS)
 
 Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_podpora_windows.md), [gud02/ANA-02](guides/gud02_install_standalone/analyses/ANA-02_standalone_architektura.md), [guides/ANA-01](guides/ANA-01_testovaci_strategie.md), [poc06/ANA-01](pocs/poc06_alternatives/analyses/ANA-01_srovnani_orchestratoru.md)
 
@@ -111,7 +115,7 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 | OP-02 | **Edge Worker na Windows** — jak nasadit na vyrobni linku? | Nativni Windows broken (issue #55297); Windows neni podporovany target | **ANALYZOVANO** viz [ANA-11](analyses/ANA-11_edge_worker_windows_deployment.md): Docker na Win (PoC) nebo mini-Linux PC (produkce) |
 | OP-03 | **Data transfer v produkci** — cim nahradit XCom? | XCom data zatezuji metadata DB (SPOF) | **ANALYZOVANO** viz [ANA-12](analyses/ANA-12_nahrada_xcom_produkce.md): XCom Object Storage Backend + MinIO (konfiguracni zmena, DAGy beze zmeny) |
 | OP-04 | **SSL/TLS** pro edge-to-central komunikaci | HTTP bez sifrovani = bezpecnostni riziko v produkci | **ANALYZOVANO** viz [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md): Nginx reverse proxy + self-signed (PoC) / interni CA (produkce) |
-| OP-05 | **Disaster recovery** — zaloha metadata DB | PostgreSQL je SPOF, ztrata = ztrata historie vsech runu | pg_dump cronjob, streaming replication, nebo managed DB |
+| OP-05 | **Disaster recovery** — zaloha metadata DB | PostgreSQL je SPOF, ztrata = ztrata historie vsech runu | **ANALYZOVANO** viz [ANA-15](analyses/ANA-15_backup_metadata_db.md): pg_dump cronjob (zaklad), PITR (pokrocile), streaming replication (HA) |
 
 ### Skalovani — stredni priorita
 
@@ -119,14 +123,14 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 |---|--------|----------|
 | OP-06 | Kolik stroju/edge workeru zvladne jeden central server? | Zatim testovano s 1 edge workerem a 2 stroji |
 | OP-07 | Jake jsou realne datove objemy a formaty? | ANA-02 definuje zadani, ale konkretni formaty nezname |
-| OP-08 | Jak resit schema versioning (edge ↔ central kontrakt)? | Novy stroj = novy edge kod; jak zajistit zpetnou kompatibilitu? |
+| OP-08 | ~~Schema versioning (edge ↔ central kontrakt)~~ | **ANALYZOVANO** viz [ANA-16](analyses/ANA-16_schema_versioning.md): additive-only schema, tolerantni parser |
 
 ### Provoz — nizka priorita (az pri nasazeni)
 
 | # | Otazka | Poznamka |
 |---|--------|----------|
 | OP-09 | Kdo udrzuje DAGy — DevOps nebo vyvojari? | Code-first vyzaduje Python znalost |
-| OP-10 | Jak resit CI/CD pro DAGy? | Git → test → deploy do dags/ volume |
+| OP-10 | ~~CI/CD pro DAGy~~ | **ANALYZOVANO** viz [ANA-17](analyses/ANA-17_cicd_dag_deployment.md): lint + DAG integrity test + git-sync deploy |
 | OP-11 | Alerting — Zabbix eskalace nebo AlertManager? | Zavisi na existujici infrastrukture zakaznika |
 
 ## Next steps
@@ -141,8 +145,9 @@ Lokalni analyzy: [gud02/ANA-01](guides/gud02_install_standalone/analyses/ANA-01_
 
 - [x] **OP-01**: Discovery idempotence → [ANA-13](analyses/ANA-13_idempotence_etl.md) (UPSERT na natural key)
 - [x] **OP-04**: Discovery SSL/TLS → [ANA-14](analyses/ANA-14_ssl_tls_edge_central.md) (Nginx reverse proxy + interni CA)
-- [ ] **OP-05**: Backup strategie pro PostgreSQL metadata DB
-- [ ] **OP-10**: CI/CD pipeline pro DAGy (lint → test → deploy)
+- [x] **OP-05**: Backup metadata DB → [ANA-15](analyses/ANA-15_backup_metadata_db.md) (pg_dump cronjob jako zaklad)
+- [x] **OP-08**: Schema versioning → [ANA-16](analyses/ANA-16_schema_versioning.md) (additive-only schema)
+- [x] **OP-10**: CI/CD pro DAGy → [ANA-17](analyses/ANA-17_cicd_dag_deployment.md) (lint + test + git-sync)
 
 ### Faze 3 — Prezentace
 
